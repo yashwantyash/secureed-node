@@ -1,0 +1,121 @@
+<!-- public/edit_account.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/resources/secure_app.css">
+    <link rel="icon" type="image/svg+xml" href="/resources/Header_Lock_Image.svg">
+    <script defer src="/resources/editaccount.js"></script>
+    <meta charset="utf-8" />
+    <title>Secure ED. - Edit Account</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                    <tr>
+                        <td class="lock"><img src="/resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                        <td class="title"><b>Secure ED.</b></td>
+                        <td class="header_table_cell"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <nav>
+            <button class="button_large" type="button" onclick="location.href='/dashboard/admin'">Dashboard</button>
+            <button class="button_large" type="button" onclick="location.href='/logout'">Log Out</button>
+        </nav>
+
+        <main>
+            <h1>Edit Account</h1>
+            <div class="horizontal_line">
+                <hr>
+            </div>
+            <p id="submiterror" style="display:none"></p>
+            <div style="text-align:center">
+                <div class="edit_acc_pane">
+                    <form action="/edit_account" method="POST" id="editaccform">
+                        <label class="edit_acc_label">Account type:</label>
+                        <select name="acctype" id="acctype" onchange="swapselection(); clearInputs();">
+                            <optgroup label="Choose one">
+                                <option value="2">Faculty</option>
+                                <option value="3">Student</option>
+                            </optgroup>
+                        </select>
+                        <div class="horizontal_line">
+                            <hr>
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><label class="edit_acc_label">First Name:</label></td>
+                                    <td><input type="text" id="fname" name="fname" required></td>
+                                    <td><label class="edit_acc_label">Last Name:</label></td>
+                                    <td><input type="text" id="lname" name="lname" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Date of Birth:</label></td>
+                                    <td><input type="date" id="dob" name="dob" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label" id="positionlabel">Rank:</label></td>
+                                    <td>
+                                        <select name="studentyear" id="studentyear" style="display:none;">
+                                            <optgroup label="Student">
+                                                <option value="1">Freshman</option>
+                                                <option value="2">Sophomore</option>
+                                                <option value="3">Junior</option>
+                                                <option value="4">Senior</option>
+                                            </optgroup>
+                                        </select>
+                                        <select name="facultyrank" id="facultyrank" style="display:block;">
+                                            <optgroup label="Faculty">
+                                                <option value="Instructor">Instructor</option>
+                                                <option value="Adjunct">Adjunct Professor</option>
+                                                <option value="Assistant">Assistant Professor</option>
+                                                <option value="Associate">Associate Professor</option>
+                                                <option value="Professor">Professor</option>
+                                                <option value="Emeritus">Professor Emeritus</option>
+                                            </optgroup>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Email:</label></td>
+                                    <td><input type="email" name="email" id="email" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Confirm Email:</label></td>
+                                    <td><input type="email" name="confirmemail" id="confirmemail" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Password:</label></td>
+                                    <td><input type="password" name="password" id="password" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Confirm Password:</label></td>
+                                    <td><input type="password" name="confirmpassword" id="confirmpassword" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Security Question:</label></td>
+                                    <td><input type="text" name="squestion" id="squestion" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Answer:</label></td>
+                                    <td><input type="text" name="sanswer" id="sanswer" required></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        <div style="text-align: left;">
+                            <input type="submit" value="Submit">
+                            <input type="button" value="Cancel" onclick="location.href='/dashboard/admin'">
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>

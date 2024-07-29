@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="resources/secure_app.css">
+    <link rel="icon" type="image/svg" href="resources/Header_Lock_Image.svg">
+    <script async src="resources/nav.js"></script>
+    <meta charset="utf-8" />
+    <title>Secure ED. - Dashboard</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                <tr>
+                    <td class="lock"><img src="resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                    <td class="title"><b>Secure ED.</b></td>
+                    <td class="header_table_cell"></td>
+                </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <!--Navigation Buttons-->
+        <nav>
+            <button class="button_large" type="button" onclick="logout();">Log Out</button>
+        </nav>
+
+        <main id="dashboard-content">
+            <!-- Content will be dynamically inserted here based on user type -->
+        </main>
+    </div>
+
+    <script>
+        function getDashboardContent() {
+            fetch('/dashboard/content')
+                .then(response => response.json())
+                .then(data => {
+                    const dashboardContent = document.getElementById('dashboard-content');
+                    if (data.acctype === 1) { // Admin
+                        document.title = 'Secure ED. - Admin Dashboard';
+                        dashboardContent.innerHTML = `
+                            <h1>Admin Dashboard</h1>
+                            <div class="horizontal_line"><hr></div>
+                            <div>
+                                <button class="button_large" type="button" onclick="location.href = 'create_account.html'">Create Account</button>
+                            </div>
+                            <br>
+                            <button class="button_large" type="button" onclick="location.href = 'user_search.html'">User Search</button>
+                        `;
+                    } else if (data.acctype === 2) { // Faculty
+                        document.title = 'Secure ED. - Faculty Dashboard';
+                        dashboardContent.innerHTML = `
+                            <h1>Faculty Dashboard</h1>
+                            <div class="horizontal_line"><hr></div>
+                            <div>
+                                <button class="button_large" type="button" onclick="location.href = 'enter_grades.html'">Enter Grades</button>
+                            </div>
+                        `;
+                    } else if (data.acctype === 3) { // Student
+                        document.title = 'Secure ED. - Student Dashboard';
+                        dashboardContent.innerHTML = `
+                            <h1>Student Dashboard</h1>
+                            <div class="horizontal_line"><hr></div>
+                            <div>
+                                <button class="button_large" type="button" onclick="location.href = 'course_search.html'">Course Search</button>
+                            </div>
+                        `;
+                    } else {
+                        dashboardContent.innerHTML = `<p>Unknown account type</p>`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error fetching dashboard content:', error);
+                });
+        }
+
+        function logout() {
+            fetch('/logout')
+                .then(response => {
+                    if (response.ok) {
+                        localStorage.removeItem('acctype');
+                        window.location.href = '/';
+                    }
+                });
+        }
+
+        // Fetch the dashboard content when the page loads
+        window.onload = getDashboardContent;
+    </script>
+</body>
+</html>

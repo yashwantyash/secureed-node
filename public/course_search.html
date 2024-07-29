@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/resources/secure_app.css">
+    <link rel="icon" type="image/svg+xml" href="/resources/Header_Lock_Image.svg">
+    <script async src="/resources/nav.js"></script>
+    <meta charset="utf-8" />
+    <title>Secure ED. - Course Search</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                <tr>
+                    <td class="lock"><img src="/resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                    <td class="title"><b>Secure ED.</b></td>
+                    <td class="header_table_cell"></td>
+                </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <nav>
+            <button class="button_large" type="button" onclick="location.href='/dashboard/student'">Dashboard</button>
+            <button class="button_large" type="button" onclick="location.href='/logout'">Log Out</button>
+        </nav>
+
+        <main>
+            <h1>Course Search</h1>
+            <div class="horizontal_line">
+                <hr>
+            </div>
+            <br><br>
+
+            <div style="text-align:center">
+                <div class="search_pane">
+                    <h1>Search Filters:</h1>
+                    <div class="horizontal_line">
+                        <hr>
+                    </div>
+                    <form id="courseSearchForm" method="post">
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td class="search_filter">
+                                        <label class="search_filter">Semester:</label>
+                                    </td>
+                                    <td class="search_filter_input">
+                                        <input type="text" id="semester" name="semester">
+                                    </td>
+                                    <td class="search_filter">
+                                        <label class="search_filter">Department:</label>
+                                    </td>
+                                    <td class="search_filter_input">
+                                        <input type="text" id="department" name="department">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td class="search_filter">
+                                        <label class="search_filter">Course Name:</label>
+                                    </td>
+                                    <td class="search_filter_input">
+                                        <input type="text" id="coursename" name="coursename">
+                                    </td>
+                                    <td class="search_filter">
+                                        <label class="search_filter">Course ID:</label>
+                                    </td>
+                                    <td class="search_filter_input">
+                                        <input type="text" id="courseid" name="courseid">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td style="text-align: right">
+                                        <button class="button_large" type="submit">Search</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+
+                <div class="course_search_results">
+                    <h1>Results:</h1>
+                    <div class="horizontal_line">
+                        <hr>
+                    </div>
+                    <table class="course_search_table">
+                        <thead>
+                            <tr>
+                                <td class="course_search_results_column_name"><b><u>Course Name</u></b></td>
+                                <td class="course_search_results_column_name"><b><u>Course ID</u></b></td>
+                                <td class="course_search_results_column_name"><b><u>Professor</u></b></td>
+                                <td class="course_search_results_column_name"><b><u>Semester and Year</u></b></td>
+                                <td class="course_search_results_column_name"><b><u>Location</u></b></td>
+                                <td class="course_search_results_column_name"><b><u>Action</u></b></td>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="results"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        document.getElementById('courseSearchForm').addEventListener('submit', function(event) {
+            event.preventDefault(); // Prevent the form from submitting the default way
+
+            var data = new FormData(this);
+
+            var xhr = new XMLHttpRequest();
+            xhr.open('POST', "/course_search", true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+
+            xhr.onload = function () {
+                var results = JSON.parse(this.response),
+                    wrapper = document.getElementById("results");
+
+                console.log('Received results:', results);
+
+                // Clear previous results
+                wrapper.innerHTML = "";
+
+                if (results.length > 0) {
+                    for (let res of results) {
+                        let row = document.createElement("span");
+
+                        row.innerHTML = `<table class="course_search_table">
+                            <tr>
+                                <td class="course_search_results_output">${res.CourseName}</td>
+                                <td class="course_search_results_output">${res.CRN}</td>
+                                <td class="course_search_results_output">${res.Email}</td>
+                                <td class="course_search_results_output">${res.Semester} ${res.Year}</td>
+                                <td class="course_search_results_output">${res.Location}</td>
+                                <td class="course_search_results_output"><button onclick="enrollCourse(${res.CRN})">Enroll</button></td>
+                            </tr>
+                        </table>`;
+                        wrapper.appendChild(row);
+                    }
+                } else {
+                    wrapper.innerHTML = "No results found";
+                }
+            };
+
+            var params = [];
+            data.forEach((value, key) => {
+                if (value.trim() !== "") {
+                    params.push(encodeURIComponent(key) + '=' + encodeURIComponent(value));
+                }
+            });
+            xhr.send(params.join('&'));
+        });
+
+        function enrollCourse(courseid) {
+            window.location.href = `/course_search/enroll/${courseid}`;
+        }
+    </script>
+</body>
+</html>

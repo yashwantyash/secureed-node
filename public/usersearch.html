@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/resources/secure_app.css">
+    <link rel="icon" type="image/svg+xml" href="/resources/Header_Lock_Image.svg">
+    <script async src="/resources/usersearchdisplay.js"></script>
+    <meta charset="utf-8" />
+    <title>Secure ED. - User Search</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                <tr>
+                    <td class="lock"><img src="/resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                    <td class="title"><b>Secure ED.</b></td>
+                    <td class="header_table_cell"></td>
+                </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <nav>
+            <button class="button_large" type="button" onclick="location.href='/dashboard/admin'">Dashboard</button>
+            <button class="button_large" type="button" onclick="location.href='/logout'">Log Out</button>
+        </nav>
+
+        <main>
+            <h1>User Search</h1>
+            <div class="horizontal_line">
+                <hr>
+            </div>
+            <br><br>
+            <div style="text-align:center">
+                <div class="search_pane">
+                    <h1>Search Filters:</h1>
+                    <div class="horizontal_line">
+                        <hr>
+                    </div>
+                    <form id="searchform" method="post" onsubmit="return fetchResults();">
+                        <table>
+                        <tbody>
+                            <tr>
+                                <td class="search_filter">
+                                    <label class="search_filter">Account type:</label>
+                                </td>
+                                <td class="search_filter_input">
+                                    <select id="acctype" name="acctype" onchange="swapsearch(); clearInputs();">
+                                        <option value="Faculty">Faculty</option>
+                                        <option value="Student">Student</option>
+                                    </select>
+                                </td>
+                                <td class="search_filter">
+                                    <label class="search_filter" id="positionlabel">Rank:</label>
+                                </td>
+                                <td class="search_filter_input">
+                                    <select id="studentyear" name="studentyear" style="display:none;">
+                                        <optgroup label="Student">
+                                            <option value="1">Freshman</option>
+                                            <option value="2">Sophomore</option>
+                                            <option value="3">Junior</option>
+                                            <option value="4">Senior</option>
+                                        </optgroup>
+                                    </select>
+                                    <select id="facultyrank" name="facultyrank" style="display:block;">
+                                        <optgroup label="Faculty">
+                                            <option value="Instructor">Instructor</option>
+                                            <option value="Adjunct">Adjunct Professor</option>
+                                            <option value="Assistant">Assistant Professor</option>
+                                            <option value="Associate">Associate Professor</option>
+                                            <option value="Professor">Professor</option>
+                                            <option value="Emeritus">Professor Emeritus</option>
+                                        </optgroup>
+                                    </select>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="search_filter">
+                                    <label class="search_filter">First Name:</label>
+                                </td>
+                                <td class="search_filter_input">
+                                    <input type="text" id="fname" name="fname"/>
+                                </td>
+                                <td class="search_filter">
+                                    <label class="search_filter">Last Name:</label>
+                                </td>
+                                <td>
+                                    <input type="text" id="lname" name="lname">
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="search_filter">
+                                    <label>Date of Birth:</label>
+                                </td>
+                                <td class="search_filter_input">
+                                    <input type="date" id="dob" name="dob">
+                                </td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td class="search_filter">
+                                    <label class="search_filter">Email:</label>
+                                </td>
+                                <td class="search_filter_input">
+                                    <input type="email" name="email" id="email">
+                                </td>
+                                <td></td>
+                                <td style="text-align: right">
+                                    <button class="button_large" type="submit">
+                                        Search
+                                    </button>
+                                </td>
+                            </tr>
+                        </tbody>
+                        </table>
+                    </form>
+                </div>
+
+                <div class="search_results">
+                    <h1>Results:</h1>
+                    <div class="horizontal_line">
+                        <hr>
+                    </div>
+                    <table class="search_table">
+                        <thead>
+                            <tr>
+                                <td class="search_results_column_name"><b><u>Name</u></b></td>
+                                <td class="search_results_column_name"><b><u>DOB</u></b></td>
+                                <td class="search_results_column_name"><b><u>Email</u></b></td>
+                                <td class="search_results_column_name"><b><u id="positionresults">Rank</u></b></td>
+                                <td class="search_results_column_name">&nbsp; &nbsp; &nbsp;</td>
+                            </tr>
+                        </thead>
+                    </table>
+                    <div id="results"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+        <script>
+        function swapsearch() {
+            const acctype = document.getElementById("acctype").value;
+            const studentyear = document.getElementById("studentyear");
+            const facultyrank = document.getElementById("facultyrank");
+            const positionlabel = document.getElementById("positionlabel");
+
+            if (acctype === "Student") {
+                facultyrank.style.display = "none";
+                studentyear.style.display = "block";
+                positionlabel.innerText = "Year:";
+            } else {
+                studentyear.style.display = "none";
+                facultyrank.style.display = "block";
+                positionlabel.innerText = "Rank:";
+            }
+        }
+
+        function clearInputs() {
+            document.getElementById("fname").value = '';
+            document.getElementById("lname").value = '';
+            document.getElementById("dob").value = '';
+            document.getElementById("email").value = '';
+        }
+
+        function fetchResults(event) {
+            event.preventDefault();
+            
+            const form = document.getElementById('searchform');
+            const formData = new FormData(form);
+            
+            // Log the form data for debugging
+            console.log('Form data:', Array.from(formData.entries()));
+            
+            fetch('/usersearch', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(results => {
+                const wrapper = document.getElementById('results');
+                wrapper.innerHTML = '';
+
+                if (results.length > 0) {
+                    results.forEach(res => {
+                        const dob = res.dob ? new Date(res.dob).toLocaleDateString() : '';
+                        const name = `${res.fname} ${res.lname}`;
+                        const rank = res.acctype == 3 ? fixStudentYear(res.studentyear) : res.facultyrank;
+                        const row = document.createElement('span');
+                        row.innerHTML = `
+                            <form method="get" action="/edit_account/${res.email}">
+                                <input type="hidden" name="email" value="${res.email}">
+                                <table class="search_table">
+                                    <tr>
+                                        <td class="search_results_output">${name}</td>
+                                        <td class="search_results_output">${dob}</td>
+                                        <td class="search_results_output">${res.email}</td>
+                                        <td class="search_results_output">${rank}</td>
+                                        <td class="search_results_output"><button name="Edit" id="Edit" type="submit">Edit</button></td>
+                                    </tr>
+                                </table>
+                            </form>`;
+                        wrapper.appendChild(row);
+                    });
+                } else {
+                    wrapper.innerHTML = 'No results found';
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function fixStudentYear(year) {
+            switch(year) {
+                case '1':
+                    return 'Freshman';
+                case '2':
+                    return 'Sophomore';
+                case '3':
+                    return 'Junior';
+                case '4':
+                    return 'Senior';
+                default:
+                    return '';
+            }
+        }
+    </script>
+</body>
+</html>

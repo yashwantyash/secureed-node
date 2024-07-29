@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="/resources/secure_app.css">
+    <link rel="icon" type="image/svg+xml" href="/resources/Header_Lock_Image.svg">
+    <script async src="/resources/nav.js"></script>
+    <meta charset="utf-8" />
+    <title>Secure ED. - Create Account</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                    <tr>
+                        <td class="lock"><img src="/resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                        <td class="title"><b>Secure ED.</b></td>
+                        <td class="header_table_cell"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <nav>
+            <button class="button_large" type="button" onclick="location.href='/dashboard/admin'">Dashboard</button>
+            <button class="button_large" type="button" onclick="location.href='/logout'">Log Out</button>
+        </nav>
+
+        <main>
+            <h1>Create Account</h1>
+            <div class="horizontal_line">
+                <hr>
+            </div>
+            <p id="submiterror" style="display:none"></p>
+            <div style="text-align:center">
+                <div class="edit_acc_pane">
+                    <form action="/create_account" method="POST" id="accform">
+                        <label class="edit_acc_label">Account type:</label>
+                        <select name="acctype" id="acctype" onchange="swapselection(); clearInputs();">
+                            <optgroup label="Choose one">
+                                <option value="2">Faculty</option>
+                                <option value="3">Student</option>
+                            </optgroup>
+                        </select>
+                        <div class="horizontal_line">
+                            <hr>
+                        </div>
+                        <table>
+                            <tbody>
+                                <tr>
+                                    <td><label class="edit_acc_label">First Name:</label></td>
+                                    <td><input type="text" id="fname" name="fname" required></td>
+                                    <td><label class="edit_acc_label">Last Name:</label></td>
+                                    <td><input type="text" id="lname" name="lname" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Date of Birth:</label></td>
+                                    <td><input type="date" id="dob" name="dob" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label" id="positionlabel">Rank:</label></td>
+                                    <td>
+                                        <select name="studentyear" id="studentyear" style="display:none;">
+                                            <optgroup label="Student">
+                                                <option value="1">Freshman</option>
+                                                <option value="2">Sophomore</option>
+                                                <option value="3">Junior</option>
+                                                <option value="4">Senior</option>
+                                            </optgroup>
+                                        </select>
+                                        <select name="facultyrank" id="facultyrank" style="display:block;">
+                                            <optgroup label="Faculty">
+                                                <option value="Instructor">Instructor</option>
+                                                <option value="Adjunct">Adjunct Professor</option>
+                                                <option value="Assistant">Assistant Professor</option>
+                                                <option value="Associate">Associate Professor</option>
+                                                <option value="Professor">Professor</option>
+                                                <option value="Emeritus">Professor Emeritus</option>
+                                            </optgroup>
+                                        </select>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Email:</label></td>
+                                    <td><input type="email" name="email" id="email" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Confirm Email:</label></td>
+                                    <td><input type="email" name="confirmemail" id="confirmemail" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Password:</label></td>
+                                    <td><input type="password" name="password" id="password" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Confirm Password:</label></td>
+                                    <td><input type="password" name="confirmpassword" id="confirmpassword" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Security Question:</label></td>
+                                    <td><input type="text" name="squestion" id="squestion" required></td>
+                                </tr>
+                                <tr>
+                                    <td><label class="edit_acc_label">Answer:</label></td>
+                                    <td><input type="text" name="sanswer" id="sanswer" required></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+                <div style="text-align: left;">
+                    <input type="submit" value="Submit" form="accform">
+                    <input type="button" value="Cancel" onclick="location.href='/dashboard/admin'">
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const email = urlParams.get('email');
+            if (email) {
+                fetch(`/usersearch/${email}`)
+                    .then(response => response.json())
+                    .then(user => {
+                        document.getElementById("acctype").value = user.acctype;
+                        document.getElementById("fname").value = user.fname;
+                        document.getElementById("lname").value = user.lname;
+                        document.getElementById("dob").value = user.dob;
+                        document.getElementById("email").value = user.email;
+                        document.getElementById("confirmemail").value = user.email;
+                        document.getElementById("password").value = user.password;
+                        document.getElementById("confirmpassword").value = user.password;
+                        document.getElementById("squestion").value = user.squestion;
+                        document.getElementById("sanswer").value = user.sanswer;
+                        if (user.acctype === 3) {
+                            document.getElementById("studentyear").value = user.studentyear;
+                            document.getElementById("studentyear").style.display = "block";
+                            document.getElementById("facultyrank").style.display = "none";
+                        } else {
+                            document.getElementById("facultyrank").value = user.facultyrank;
+                            document.getElementById("facultyrank").style.display = "block";
+                            document.getElementById("studentyear").style.display = "none";
+                        }
+                    });
+            }
+        });
+
+        function swapselection() {
+            const acctype = document.getElementById("acctype").value;
+            const studentyear = document.getElementById("studentyear");
+            const facultyrank = document.getElementById("facultyrank");
+            const positionlabel = document.getElementById("positionlabel");
+
+            if (acctype === "3") { // Student
+                facultyrank.style.display = "none";
+                studentyear.style.display = "block";
+                positionlabel.innerText = "Year:";
+            } else { // Faculty
+                studentyear.style.display = "none";
+                facultyrank.style.display = "block";
+                positionlabel.innerText = "Rank:";
+            }
+        }
+
+        function clearInputs() {
+            document.getElementById("fname").value = '';
+            document.getElementById("lname").value = '';
+            document.getElementById("dob").value = '';
+            document.getElementById("email").value = '';
+            document.getElementById("confirmemail").value = '';
+            document.getElementById("password").value = '';
+            document.getElementById("confirmpassword").value = '';
+            document.getElementById("squestion").value = '';
+            document.getElementById("sanswer").value = '';
+            document.getElementById("studentyear").value = '1';
+            document.getElementById("facultyrank").value = 'Instructor';
+        }
+    </script>
+</body>
+</html>

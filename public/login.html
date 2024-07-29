@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="resources/secure_app.css">
+    <link rel="icon" type="image/svg+xml" href="resources/Header_Lock_Image.svg">
+    <meta charset="utf-8" />
+    <title>Secure ED. - Login</title>
+</head>
+<body>
+    <div id="wrapper">
+        <header>
+            <table class="header_table">
+                <tbody>
+                <tr>
+                    <td class="lock"><img src="resources/Header_Lock_Image.svg" style="width:9vh;" alt="Header_lock"></td>
+                    <td class="title"><b>Secure ED.</b></td>
+                    <td class="header_table_cell"></td>
+                </tr>
+                </tbody>
+            </table>
+        </header>
+
+        <main>
+            <h1>Log In</h1>
+            <div class="horizontal_line">
+                <hr>
+            </div>
+            <br><br>
+            <div style="text-align:center">
+                <div class="login">
+
+                    <form id="loginForm" action="/login" method="POST" onsubmit="return validateForm()">
+                        <label style="float: left" for="username">Username:&nbsp;&nbsp;</label>
+                        <input type="text" id="username" name="username"><br><br>
+                        <label style="float: left" for="password">Password:&nbsp;&nbsp;</label>
+                        <input type="password" id="password" name="password"><br><br>
+                        <span style="float: left"><a href="forgotpassword.html">[Forgot password?]</a></span>
+                        <input type="submit" value="Submit">
+                        <div id="error-message" style="color: red; display: none;" class="error-message">
+                            <script>
+                                const urlParams = new URLSearchParams(window.location.search);
+                                const error = urlParams.get('error');
+                                if (error) {
+                                    document.getElementById('error-message').textContent = error;
+                                }
+                            </script>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script>
+        function validateForm() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const errorMessage = document.getElementById('error-message');
+
+            if (!username) {
+                errorMessage.textContent = 'Please fill out the username field.';
+                errorMessage.style.display = 'block';
+                return false;
+            }
+
+            errorMessage.style.display = 'none';
+            return true;
+        }
+
+        // Check URL parameters for error messages
+        window.onload = function() {
+            const params = new URLSearchParams(window.location.search);
+            const error = params.get('error');
+            if (error) {
+                const errorMessage = document.getElementById('error-message');
+                errorMessage.textContent = error;
+                errorMessage.style.display = 'block';
+            }
+        };
+    </script>
+</body>
+</html>
