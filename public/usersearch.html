@@ -38,7 +38,7 @@
                     <div class="horizontal_line">
                         <hr>
                     </div>
-                    <form id="searchform" method="post" onsubmit="return fetchResults();">
+                    <form id="searchform" method="post" onsubmit="return fetchResults(event);">
                         <table>
                         <tbody>
                             <tr>
@@ -139,7 +139,7 @@
             </div>
         </main>
     </div>
-        <script>
+    <script>
         function swapsearch() {
             const acctype = document.getElementById("acctype").value;
             const studentyear = document.getElementById("studentyear");
